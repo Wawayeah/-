@@ -1,0 +1,156 @@
+#include<iostream>
+using namespace std;
+
+#define MAXVEX 100
+#define INF 10000
+
+typedef struct
+{
+	int a[MAXVEX][MAXVEX];//邻接矩阵
+	int p[MAXVEX][MAXVEX];//最短路径的中间点
+	int numNodes;//当前顶点
+	int numEdges;//当前的边数
+	int weight;//权值
+}MGraph;
+
+//把图转化成邻接矩阵
+void CreateMGraph(MGraph *MG)
+{
+	int i, j, w, n;
+
+	cout << "请输入顶点数和边数:" << endl;
+	cin >> MG->numNodes >> MG->numEdges;
+	for (i = 1; i <= MG->numNodes; i++)
+	{
+		for (j = 1; j <= MG->numNodes; j++)
+		{
+			MG->p[i][j] = -1;
+		}
+	}
+
+	for (i = 1; i <= MG->numNodes; i++)
+	{
+		for (j = 1; j <= MG->numNodes; j++)
+		{
+			if (i == j)
+				MG->a[i][j] = 0;
+			else
+				MG->a[i][j] = INF;//领接矩阵初始化  i不能直接到j的直接赋值成INF最大的值65535
+		}
+	}
+	cout << "请输入边(Vi,Vj)的起点的下标i,终点的下标j和权值w(矩阵下标都是从0开始):" << endl;
+	for (n = 1; n <= MG->numEdges; n++)
+	{
+		cin >> i >> j >> w;
+		MG->a[i][j] = w;
+	}
+
+	cout << "图转换成邻接矩阵为:" << endl;
+	for (i = 1; i <= MG->numNodes; i++)
+	{
+		for (j = 1; j <= MG->numNodes; j++)
+		{
+			cout << MG->a[i][j];
+			cout << " ";
+		}
+		cout << endl;
+	}
+}
+
+void Floyd(MGraph *MG)
+{
+	int i, j, k;
+	for (i = 1; i <= MG->numNodes; i++)
+	{
+		for (j = 1; j <= MG->numNodes; j++)
+		{
+			for (k = 1; k <= MG->numNodes; k++)
+			{
+				if (k == i || j == i)continue;
+				else
+				{
+					if (MG->a[j][k] > MG->a[j][i] + MG->a[i][k])
+					{
+						MG->a[j][k] = MG->a[j][i] + MG->a[i][k];
+						MG->p[j][k] = i;//标记中间到达的点i并赋值
+					}
+				}
+
+			}
+		}
+	}
+	cout << "最短矩阵的最终结果:" << endl;
+	for (i = 1; i <=MG ->numNodes; i++)
+	{
+		for (j = 1; j <= MG->numNodes; j++)
+		{
+			cout << MG->a[i][j];
+			cout << " ";
+		}
+		cout << endl;
+	}
+}
+
+void GetPathMatrix(MGraph *MG)
+{
+	int i, j;
+	for (i = 1; i <= MG->numNodes; i++)
+	{
+		for (j = 1; j <= MG->numNodes; j++)
+		{
+			cout << MG->p[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+//递归找最短路径
+void Path(MGraph *MG, int x, int y)
+{
+	int r;
+	if (MG->p[x][y] != -1)
+	{
+		r = MG->p[x][y];
+
+		Path(MG, x, r);//通过递归从后往前找标记点 直到找到最初的标记点
+
+		cout << MG->p[x][y] << "->";//显示出被标记的路径
+	}
+	else {
+
+	}
+}
+//得到权值
+int GetPathWeight(MGraph *MG, int x, int y)
+{
+	int sum;
+	sum = MG->a[x][y];
+	return sum;
+}
+
+int main()
+{
+	int i, j;
+	int x, y;
+	int sum = 0;
+	MGraph MG;
+
+	CreateMGraph(&MG);
+
+	Floyd(&MG);
+
+	cout << "得到的路径矩阵为:" << endl;
+	GetPathMatrix(&MG);
+
+	cout << "请输入起点和终点:";
+	cin >> x >> y;
+	cout << "输出的起点到终点的最短路径:" << endl;
+	cout << x << "->";
+	Path(&MG, x, y);
+	cout << y << endl;
+
+	sum = GetPathWeight(&MG, x, y);
+	cout << "最短路径的权值:";
+	cout << sum << endl;
+	system("pause");
+	return 0;
+}
