@@ -1,0 +1,33 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#define total 10
+
+int getInvest(int items[][20],int money) {
+	int maxRevenue = 0;
+	int max[20][20] = { 0 };
+	for (int i = 1; i <= 10; i++) { //投资前i个项目
+		for (int j = 1; j <= money; j++) { //i个项目共投资j万元	
+			for (int k = 0; k <= j; k++) { //第i个项目投资k元
+				if ((items[i][k] + max[i - 1][j - k]) > max[i][j]) max[i][j] = items[i][k] + max[i - 1][j - k];
+			}
+		}
+	}
+
+	for (int i = 1; i <= 3; i++) {
+		for (int j = 1; j <= money; j++) {
+			if (max[i][j] > maxRevenue) maxRevenue = max[i][j];
+		}
+	}
+	return maxRevenue;
+}
+int main() {
+	int items[20][20];
+	for (int i = 1; i <= 10; i++) {
+		for (int j = 1; j <= 10; j++) {
+			scanf_s("%d", &items[i][j]);
+		}
+	}
+	printf("%d\n", getInvest(items, total));
+
+}
