@@ -1,0 +1,49 @@
+#include <iostream>
+#include <cstdio>
+
+using namespace std;
+
+int n,m;
+int a=1,b=1;
+int cou=0;//当前解
+int graph[20][20]={0};//图的矩阵
+int color[20]={0};//颜色的当前解
+
+bool ok(int c){
+    for(int k=1;k<=n;k++){
+        if(graph[c][k]&&color[c]==color[k])
+            return false;
+    }
+    return true;
+}
+
+void backtrack(int cur){
+    if(cur>n){
+        for(int i=1;i<=n;i++)
+            printf("%d ",color[i]);
+        cou++;
+        printf("\n");
+    }
+	else{
+        for(int i=1;i<=m;i++){
+            color[cur]=i;
+            if(ok(cur))
+                backtrack(cur+1);
+            color[cur]=0;
+        }
+    }
+}
+
+int main(){
+    scanf("%d %d",&n,&m);//n表示顶点个数；m表述颜色个数
+    while(scanf("%d %d",&a,&b)!=EOF&&a!=0&&b!=0){a,b分别为相邻顶点，当输入0，0时结束
+        graph[a][b]=1;
+        graph[b][a]=1;
+    }
+    backtrack(1);
+    if(cou == 0)
+		printf("NO");
+	else
+    	printf("共有%d种方案", cou);
+    return 0;
+}
